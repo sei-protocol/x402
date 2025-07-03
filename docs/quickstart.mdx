@@ -29,6 +29,7 @@ Before you begin, ensure you have the following:
             Sei testnet details: Chain ID `1328`, RPC `https://evm-rpc-testnet.sei-apis.com`
         </Info>
     </Accordion>
+
 </AccordionGroup>
 
 ## Create Your First Paid API
@@ -63,6 +64,9 @@ Before you begin, ensure you have the following:
     </Step>
 
     <Step title="Create a simple paid API server">
+    <Warning>
+        **Facilitator Might be Required**: The code references `facilitatorUrl` environment variable that need to be configured. You'll need to set up a facilitator to process payments or use a public facilitator. See the [Facilitator Setup Guide](/facilitators/setup) for detailed instructions to setup one.
+    </Warning>
         Create `server.js` with a protected API endpoint:
 
         ```javascript
@@ -144,4 +148,5 @@ Before you begin, ensure you have the following:
         }
         ```
     </Step>
+
 </Steps>
