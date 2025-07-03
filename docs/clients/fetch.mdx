@@ -1,0 +1,259 @@
+---
+title: "Fetch Client"
+description: "Make paid HTTP requests with the native Fetch API and x402"
+---
+
+## Fetch Client Integration
+
+Use x402 with the standard Fetch API to make paid HTTP requests. Perfect for both browser and Node.js environments.
+
+## Installation
+
+```bash
+npm install @x402/client @x402/fetch
+```
+
+## Basic Usage
+
+```typescript
+import { createClient } from "@x402/client";
+import { fetchWithPayment } from "@x402/fetch";
+
+// Create x402 client
+const client = createClient({
+  network: "sei-mainnet",
+  privateKey: process.env.X402_PRIVATE_KEY, // Your wallet private key
+});
+
+// Make a paid request
+async function fetchPaidContent() {
+  try {
+    const response = await fetchWithPayment(
+      client,
+      "https://api.example.com/premium/data"
+    );
+    const data = await response.json();
+    console.log("Premium data:", data);
+  } catch (error) {
+    console.error("Payment failed:", error);
+  }
+}
+```
+
+## Advanced Usage
+
+### Custom Payment Options
+
+```typescript
+import { createPaymentHeader } from "@x402/client";
+
+const client = createClient({
+  network: "sei-mainnet",
+  privateKey: process.env.X402_PRIVATE_KEY,
+});
+
+// Manual payment header creation
+const paymentHeader = await createPaymentHeader(client, {
+  amount: "0.05", // 0.05 SEI
+  recipient: "0x742d35Cc6e7f3c5d3D4eb2B4dd6f0E8a5C1b8eA6",
+});
+
+// Use with regular fetch
+const response = await fetch("https://api.example.com/premium/ai", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-402-payment": paymentHeader,
+  },
+  body: JSON.stringify({ prompt: "Generate a haiku about blockchain" }),
+});
+```
+
+### Error Handling
+
+```typescript
+async function robustFetchWithPayment(url: string, options = {}) {
+  try {
+    const response = await fetchWithPayment(client, url, options);
+
+    if (!response.ok) {
+      if (response.status === 402) {
+        throw new Error(
+          "Payment required - insufficient funds or invalid payment"
+        );
+      }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    return response;
+  } catch (error) {
+    console.error("Request failed:", error.message);
+    throw error;
+  }
+}
+```
+
+## Browser Example
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>x402 Fetch Example</title>
+  </head>
+  <body>
+    <button id="buyContent">Buy Premium Content (0.01 SEI)</button>
+    <div id="result"></div>
+
+    <script type="module">
+      import { createClient } from "https://unpkg.com/@x402/client";
+      import { fetchWithPayment } from "https://unpkg.com/@x402/fetch";
+
+      const client = createClient({
+        network: "sei-mainnet",
+        privateKey: "your_private_key_here", // In production, use secure key management
+      });
+
+      document
+        .getElementById("buyContent")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetchWithPayment(
+              client,
+              "https://api.example.com/premium/content"
+            );
+            const data = await response.json();
+            document.getElementById(
+              "result"
+            ).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+          } catch (error) {
+            document.getElementById(
+              "result"
+            ).innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+          }
+        });
+    </script>
+  </body>
+</html>
+```
+
+## Node.js Example
+
+```typescript
+// paid-api-client.ts
+import { createClient } from "@x402/client";
+import { fetchWithPayment } from "@x402/fetch";
+
+class PaidAPIClient {
+  private client: any;
+
+  constructor() {
+    this.client = createClient({
+      network: "sei-mainnet",
+      privateKey: process.env.X402_PRIVATE_KEY,
+    });
+  }
+
+  async getMarketData() {
+    const response = await fetchWithPayment(
+      this.client,
+      "https://api.example.com/market/premium"
+    );
+    return response.json();
+  }
+
+  async getAICompletion(prompt: string) {
+    const response = await fetchWithPayment(
+      this.client,
+      "https://api.example.com/ai/completion",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      }
+    );
+    return response.json();
+  }
+}
+
+// Usage
+const client = new PaidAPIClient();
+const data = await client.getMarketData();
+console.log("Market data:", data);
+```
+
+## Configuration Options
+
+```typescript
+const client = createClient({
+  network: "sei-mainnet", // or 'sei-testnet'
+  privateKey: process.env.X402_PRIVATE_KEY,
+
+  // Optional: Custom RPC endpoint
+  rpcUrl: "https://evm-rpc.sei-apis.com",
+
+  // Optional: Gas settings
+  gasLimit: 100000,
+  gasPrice: "1000000000", // 1 gwei
+
+  // Optional: Payment timeout
+  timeout: 30000, // 30 seconds
+});
+```
+
+## Best Practices
+
+### 1. Secure Key Management
+
+```typescript
+// ❌ Don't hardcode private keys
+const client = createClient({
+  privateKey: "0x123abc...", // NEVER DO THIS
+});
+
+// ✅ Use environment variables
+const client = createClient({
+  privateKey: process.env.X402_PRIVATE_KEY,
+});
+
+// ✅ Or use a secure key management service
+import { getSecretValue } from "./key-manager";
+const privateKey = await getSecretValue("x402-private-key");
+```
+
+### 2. Error Recovery
+
+```typescript
+async function fetchWithRetry(url: string, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fetchWithPayment(client, url);
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+    }
+  }
+}
+```
+
+### 3. Payment Validation
+
+```typescript
+// Check if payment will succeed before making request
+async function validatePayment(amount: string) {
+  const balance = await client.getBalance();
+  const requiredAmount = parseFloat(amount);
+
+  if (balance < requiredAmount) {
+    throw new Error(
+      `Insufficient balance. Required: ${amount} SEI, Available: ${balance} SEI`
+    );
+  }
+}
+```
+
+## Next Steps
+
+- [Set up an Express.js facilitator](/facilitators/express) to test with
+- [Learn about payment headers](/api/payment-header)
+- [View more examples](/examples/streaming-api)

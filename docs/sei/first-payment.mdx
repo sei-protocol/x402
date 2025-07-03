@@ -1,0 +1,423 @@
+---
+title: "Your First X402 Payment"
+description: "Step-by-step guide to processing your first micropayment on Sei Network with X402"
+icon: "credit-card"
+---
+
+# Make Your First Payment
+
+This guide walks you through creating a complete payment flow on Sei Network - from setting up a paid endpoint to successfully processing your first micropayment.
+
+<Info>
+  **What you'll build:** A simple paid API endpoint that requires 0.01 SEI per
+  request, and a client that automatically handles the payment.
+</Info>
+
+## Project Setup
+
+<Steps>
+  <Step title="Create project structure">
+    Set up a clean project structure for your first X402 payment system:
+    
+    ```bash
+    mkdir first-x402-payment && cd first-x402-payment
+    npm init -y
+    npm install @x402/facilitator @x402/client express dotenv
+    npm install -D typescript @types/node @types/express ts-node
+    ```
+    
+    Create the following file structure:
+    ```
+    first-x402-payment/
+    ├── src/
+    │   ├── server.ts      # Payment-protected API
+    │   └── client.ts      # Payment client
+    ├── .env               # Environment variables
+    ├── package.json
+    └── tsconfig.json
+    ```
+    
+    <Check>Project structure created with dependencies installed</Check>
+  </Step>
+
+{" "}
+<Step title="Configure environment">
+  Create `.env` file with your Sei testnet configuration: ```bash # Sei Network
+  Configuration NETWORK=sei-testnet RPC_URL=https://evm-rpc-testnet.sei-apis.com
+  CHAIN_ID=713715 # Your test wallet private key (create a dedicated test
+  wallet!) PRIVATE_KEY=0x1234567890abcdef... # Replace with your test wallet key
+  # Server configuration PORT=3000 API_PRICE=0.01 ```
+  <Warning>
+    **Security:** Use a dedicated test wallet with minimal funds. Never use your
+    main wallet's private key.
+  </Warning>
+  <Check>Environment variables configured</Check>
+</Step>
+
+  <Step title="Set up TypeScript">
+    Create `tsconfig.json`:
+    
+    ```json
+    {
+      "compilerOptions": {
+        "target": "ES2020",
+        "module": "commonjs",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+      },
+      "include": ["src/**/*"],
+      "exclude": ["node_modules", "dist"]
+    }
+    ```
+    
+    Update `package.json` scripts:
+    ```json
+    {
+      "scripts": {
+        "dev:server": "ts-node src/server.ts",
+        "dev:client": "ts-node src/client.ts",
+        "build": "tsc",
+        "start": "node dist/server.js"
+      }
+    }
+    ```
+    
+    <Check>TypeScript configuration ready</Check>
+  </Step>
+</Steps>
+
+## Build the Payment Server
+
+Create a server that requires payment for premium content:
+
+<CodeGroup>
+```typescript src/server.ts
+import express from 'express';
+import { createFacilitator } from '@x402/facilitator';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Create X402 facilitator for Sei testnet
+const facilitator = createFacilitator({
+network: process.env.NETWORK as 'sei-testnet',
+scheme: 'exact',
+price: process.env.API_PRICE || '0.01',
+currency: 'SEI'
+});
+
+// Public endpoint (no payment required)
+app.get('/api/public', (req, res) => {
+res.json({
+message: 'This is free public data',
+timestamp: new Date().toISOString(),
+data: {
+publicInfo: 'Available to everyone',
+freeData: 42
+}
+});
+});
+
+// Premium endpoint (requires payment)
+app.get('/api/premium', facilitator.middleware(), (req, res) => {
+res.json({
+message: 'Premium data unlocked!',
+timestamp: new Date().toISOString(),
+data: {
+secretValue: 'This data costs 0.01 SEI',
+premiumMetrics: {
+revenue: 15420.50,
+users: 3847,
+growth: '+23.4%'
+},
+prediction: 'Market will trend upward'
+}
+});
+});
+
+// Payment status endpoint
+app.get('/api/status', (req, res) => {
+res.json({
+server: 'X402 Payment Server',
+network: process.env.NETWORK,
+price: `${process.env.API_PRICE} SEI`,
+endpoints: {
+public: '/api/public (free)',
+premium: '/api/premium (0.01 SEI)',
+status: '/api/status (free)'
+}
+});
+});
+
+app.listen(PORT, () => {
+console.log(`🚀 X402 Payment Server running on http://localhost:${PORT}`);
+console.log(`💰 Premium endpoint: /api/premium (${process.env.API_PRICE} SEI)`);
+console.log(`🆓 Public endpoint: /api/public (free)`);
+console.log(`📊 Status: /api/status`);
+console.log('\n🧪 Test with: curl http://localhost:3000/api/premium');
+});
+
+````
+</CodeGroup>
+
+## Build the Payment Client
+
+Create a client that can make paid requests:
+
+<CodeGroup>
+```typescript src/client.ts
+import { createClient } from '@x402/client';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+async function demonstratePayments() {
+  console.log('🔄 Initializing X402 client for Sei testnet...\n');
+
+  try {
+    // Create X402 client
+    const client = createClient({
+      network: process.env.NETWORK as 'sei-testnet',
+      privateKey: process.env.PRIVATE_KEY!
+    });
+
+    // Check wallet balance
+    console.log('💰 Checking wallet balance...');
+    const balance = await client.getBalance();
+    console.log(`   Balance: ${balance} SEI\n`);
+
+    if (parseFloat(balance) < 0.05) {
+      console.log('⚠️  Low balance! Get test SEI from: https://faucet.sei.io\n');
+    }
+
+    // Test free endpoint first
+    console.log('🆓 Testing free endpoint...');
+    const freeResponse = await fetch('http://localhost:3000/api/public');
+    const freeData = await freeResponse.json();
+    console.log('✅ Free endpoint response:', freeData.message);
+    console.log('   Data:', freeData.data, '\n');
+
+    // Try premium endpoint without payment (should fail)
+    console.log('❌ Testing premium endpoint without payment...');
+    const unpaidResponse = await fetch('http://localhost:3000/api/premium');
+    if (unpaidResponse.status === 402) {
+      console.log('✅ Payment required (as expected)');
+      console.log('   Status:', unpaidResponse.status, unpaidResponse.statusText, '\n');
+    }
+
+    // Make paid request to premium endpoint
+    console.log('💳 Making paid request to premium endpoint...');
+    const paidResponse = await client.request('http://localhost:3000/api/premium');
+    console.log('✅ Payment successful!');
+    console.log('   Response:', paidResponse.data.message);
+    console.log('   Premium data:', paidResponse.data.data, '\n');
+
+    // Check final balance
+    const finalBalance = await client.getBalance();
+    const spent = parseFloat(balance) - parseFloat(finalBalance);
+    console.log('💰 Final balance:', finalBalance, 'SEI');
+    console.log(`💸 Amount spent: ~${spent.toFixed(4)} SEI`);
+    console.log('\n🎉 First X402 payment completed successfully!');
+
+  } catch (error) {
+    console.error('❌ Error:', error.message);
+    console.log('\n🔧 Troubleshooting:');
+    console.log('   1. Make sure the server is running: npm run dev:server');
+    console.log('   2. Check your wallet has test SEI: https://faucet.sei.io');
+    console.log('   3. Verify environment variables in .env file');
+  }
+}
+
+demonstratePayments();
+````
+
+</CodeGroup>
+
+## Test Your First Payment
+
+<Steps>
+  <Step title="Start the payment server">
+    In your first terminal, start the server:
+    
+    ```bash
+    npm run dev:server
+    ```
+    
+    You should see:
+    ```
+    🚀 X402 Payment Server running on http://localhost:3000
+    💰 Premium endpoint: /api/premium (0.01 SEI)
+    🆓 Public endpoint: /api/public (free)
+    📊 Status: /api/status
+    
+    🧪 Test with: curl http://localhost:3000/api/premium
+    ```
+    
+    <Check>Server running and ready to accept requests</Check>
+  </Step>
+
+  <Step title="Test payment requirement">
+    In a second terminal, test that payment is required:
+    
+    ```bash
+    curl http://localhost:3000/api/premium
+    ```
+    
+    Expected response (402 Payment Required):
+    ```json
+    {
+      "error": "Payment Required",
+      "amount": "0.01",
+      "currency": "SEI",
+      "network": "sei-testnet",
+      "message": "Payment of 0.01 SEI required to access this endpoint"
+    }
+    ```
+    
+    <Check>Payment requirement working correctly</Check>
+  </Step>
+
+  <Step title="Make your first paid request">
+    Run the payment client:
+    
+    ```bash
+    npm run dev:client
+    ```
+    
+    You should see output like:
+    ```
+    🔄 Initializing X402 client for Sei testnet...
+    
+    💰 Checking wallet balance...
+       Balance: 0.95 SEI
+    
+    🆓 Testing free endpoint...
+    ✅ Free endpoint response: This is free public data
+       Data: { publicInfo: 'Available to everyone', freeData: 42 }
+    
+    ❌ Testing premium endpoint without payment...
+    ✅ Payment required (as expected)
+       Status: 402 Payment Required
+    
+    💳 Making paid request to premium endpoint...
+    ✅ Payment successful!
+       Response: Premium data unlocked!
+       Premium data: {
+         secretValue: 'This data costs 0.01 SEI',
+         premiumMetrics: { revenue: 15420.5, users: 3847, growth: '+23.4%' },
+         prediction: 'Market will trend upward'
+       }
+    
+    💰 Final balance: 0.9392 SEI
+    💸 Amount spent: ~0.0108 SEI
+    
+    🎉 First X402 payment completed successfully!
+    ```
+    
+    <Check>Payment processed successfully on Sei testnet</Check>
+  </Step>
+</Steps>
+
+## Understanding What Happened
+
+Let's break down the payment flow:
+
+<Accordion title="1. Payment Detection">
+  When the client requests `/api/premium`, the X402 facilitator middleware: -
+  Checks for a payment header in the request - Finds no payment, returns 402
+  Payment Required - Includes payment details (amount, currency, network)
+</Accordion>
+
+<Accordion title="2. Payment Creation">
+  The X402 client automatically: - Detects the 402 response - Creates a payment
+  transaction on Sei testnet - Signs and submits the transaction - Waits for
+  confirmation (usually ~300ms on Sei)
+</Accordion>
+
+<Accordion title="3. Payment Verification">
+  The facilitator middleware: - Receives the retry request with payment header -
+  Verifies the payment on Sei blockchain - Confirms the correct amount was paid
+  to the correct address - Allows access to the protected content
+</Accordion>
+
+<Accordion title="4. Response Delivery">
+  Once payment is verified: - The protected endpoint handler executes - Premium
+  content is returned to the client - The payment is considered complete
+</Accordion>
+
+## Payment Details
+
+View your payment on the Sei testnet explorer:
+
+1. Note the transaction hash from the client logs
+2. Visit [Sei Testnet Explorer](https://seitrace.com/?chain=testnet)
+3. Search for your transaction hash
+4. Verify the payment amount and recipient
+
+<CardGroup cols={2}>
+  <Card title="Transaction Hash" icon="link">
+    **Find in client logs** Look for the transaction hash when the payment is
+    processed
+  </Card>
+  <Card title="Payment Verification" icon="check">
+    **On-chain confirmation** The exact payment amount and recipient address are
+    verified
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Add Wallet UI" href="/sei/wallet-integration" icon="wallet">
+    **User-friendly payments** Let users connect their wallets and pay through a
+    UI instead of using private keys
+  </Card>
+  <Card title="Streaming Payments" href="/sei/streaming-payments" icon="wave">
+    **Continuous payment flows** Implement pay-per-use APIs for real-time data
+    and long-running processes
+  </Card>
+</CardGroup>
+
+<CardGroup cols={2}>
+  <Card title="Production Setup" href="/facilitators/deployment" icon="rocket">
+    **Deploy to production** Scale your payment system for real-world usage with
+    monitoring and optimization
+  </Card>
+  <Card title="Full-stack Example" href="/examples/next-auth" icon="app">
+    **Complete application** Build a full web application with user
+    authentication and payment integration
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Payment fails with insufficient funds">
+    **Problem:** Client shows balance but payment still fails **Solution:** -
+    Ensure you have enough SEI for both the payment amount AND gas fees - Try
+    with a higher balance (request more from faucet) - Check you're on the
+    correct network (testnet vs mainnet)
+  </Accordion>
+
+  <Accordion title="Server doesn't detect payment">
+    **Problem:** Payment goes through but server still returns 402 **Solution:**
+    - Verify server and client are using the same network - Check the
+    facilitator address matches your wallet - Wait for transaction confirmation
+    (up to 1-2 seconds on Sei)
+  </Accordion>
+
+  <Accordion title="Connection errors">
+    **Problem:** RPC connection failures or timeouts **Solution:** - Verify RPC
+    URL is correct for testnet - Check firewall/proxy settings - Try alternative
+    RPC endpoints from Sei documentation
+  </Accordion>
+</AccordionGroup>
+
+**Congratulations!** 🎉 You've successfully processed your first X402 micropayment on Sei Network. You now understand the complete payment flow and are ready to build more sophisticated payment systems.

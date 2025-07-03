@@ -1,0 +1,56 @@
+---
+title: "Facilitator Introduction"
+description: "Learn how to accept x402 payments in your server"
+---
+
+## What is a Facilitator?
+
+A facilitator is a server that accepts and validates x402 payments. It acts as the payment processor for your APIs or content, handling payment verification on the Sei Network and serving protected resources.
+
+## Quick Start
+
+Install the facilitator package:
+
+```bash
+npm install @x402/facilitator
+```
+
+## Basic Implementation
+
+```typescript
+import { createFacilitator } from "@x402/facilitator";
+
+const facilitator = createFacilitator({
+  network: "sei-mainnet",
+  privateKey: process.env.FACILITATOR_PRIVATE_KEY,
+  pricing: {
+    amount: "0.01", // 0.01 SEI per request
+    currency: "SEI",
+  },
+});
+
+// Validate payment and serve content
+app.get("/protected", async (req, res) => {
+  try {
+    const payment = await facilitator.validatePayment(req.headers);
+    res.json({ data: "Premium content here!" });
+  } catch (error) {
+    res.status(402).json({
+      error: "Payment required",
+      price: "0.01 SEI",
+    });
+  }
+});
+```
+
+## Key Features
+
+- **Automatic payment validation** on Sei Network
+- **Flexible pricing models** (per-request, usage-based)
+- **Built-in middleware** for popular frameworks
+- **Real-time settlement** with instant confirmation
+
+## Next Steps
+
+- [Express.js Integration](/facilitators/express)
+- [Advanced Configuration](/facilitators/setup)

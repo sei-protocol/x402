@@ -1,0 +1,110 @@
+---
+title: "How x402 Works"
+description: "Technical overview of the x402 payment flow"
+---
+
+## Payment Flow
+
+x402 enables seamless micropayments through HTTP headers with the following flow:
+
+### 1. Payment Preparation
+
+The client creates a payment transaction on Sei Network:
+
+```typescript
+// Client prepares payment
+const payment = await client.createPayment({
+  amount: "0.01", // 0.01 SEI
+  recipient: "0x...", // Facilitator address
+  nonce: randomNonce(),
+});
+```
+
+### 2. HTTP Request with Payment
+
+The payment is included in the HTTP request header:
+
+```http
+GET /api/premium/data HTTP/1.1
+Host: api.example.com
+x-402-payment: eyJhbGciOiJIUzI1NiIs...
+```
+
+### 3. Payment Validation
+
+The server validates the payment on Sei Network:
+
+```typescript
+// Server validates payment
+const facilitator = createFacilitator({ network: "sei-mainnet" });
+const isValid = await facilitator.validatePayment(headers["x-402-payment"]);
+```
+
+### 4. Content Delivery
+
+If payment is valid, content is served immediately:
+
+```typescript
+if (isValid) {
+  res.json({ data: "Premium content" });
+} else {
+  res.status(402).json({ error: "Payment required" });
+}
+```
+
+## Technical Details
+
+### Payment Header Format
+
+The `x-402-payment` header contains a base64-encoded JSON object:
+
+```json
+{
+  "scheme": "exact",
+  "version": "1.0",
+  "transaction": {
+    "to": "0x742d35Cc...",
+    "value": "10000000000000000",
+    "data": "0x",
+    "gasLimit": "21000",
+    "gasPrice": "1000000000",
+    "nonce": 42
+  },
+  "signature": "0x...",
+  "network": "sei-mainnet"
+}
+```
+
+### Sei Network Benefits
+
+- **300ms finality**: Instant payment confirmation
+- **Low fees**: ~$0.0001 per transaction
+- **EVM compatibility**: Standard Ethereum tooling works
+- **High throughput**: 12,500+ TPS capacity
+
+### Security Model
+
+1. **Cryptographic signatures** prevent payment forgery
+2. **Nonce system** prevents replay attacks
+3. **Network validation** ensures payment integrity
+4. **Timeout mechanisms** handle network issues
+
+## Integration Points
+
+### Client Side
+
+- Payment creation and signing
+- HTTP header management
+- Error handling and retries
+
+### Server Side
+
+- Payment validation
+- Settlement processing
+- Content access control
+
+## Next Steps
+
+- [Build a facilitator](/facilitators/express)
+- [Implement a client](/clients/fetch)
+- [See use cases](/protocol/use-cases)

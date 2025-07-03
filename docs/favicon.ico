@@ -1,0 +1,20 @@
+# Favicon File
+
+This is a placeholder for the favicon.ico file. 
+
+You'll need to add an actual favicon.ico file here for the documentation site. 
+The favicon should represent the X402 protocol and ideally incorporate 
+elements that relate to payments, HTTP, or blockchain.
+
+Recommended size: 32x32 pixels or 16x16 pixels
+Format: .ico file
+
+You can create one using:
+- Online favicon generators
+- Image editing software like GIMP, Photoshop
+- Convert from PNG/SVG using online tools
+
+The favicon is referenced in mint.json:
+```json
+"favicon": "/favicon.ico"
+``` 

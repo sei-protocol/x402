@@ -1,0 +1,274 @@
+---
+title: Quick Start Guide
+description: Build your first paid API on Sei Network in under 10 minutes with x402
+icon: "bolt"
+---
+
+## Prerequisites
+
+Before you begin, ensure you have the following:
+
+<AccordionGroup>
+  <Accordion title="Node.js & Package Management" icon="node-js">
+    **Required for running x402 applications:**
+    - **Node.js** (v18 or higher) - Required for running x402 packages
+    - **npm, yarn, or pnpm** - For package management
+    
+    <Check>
+    Verify your installation: `node --version` should output v18.0.0 or higher
+    </Check>
+  </Accordion>
+
+  <Accordion title="Sei Wallet & Test Funds" icon="wallet">
+    **Required for testing payments:**
+    - **MetaMask** or **Compass Wallet** - For signing transactions
+    - **Sei Testnet configured** - Add Sei testnet to your wallet
+    - **Test SEI tokens** - Get from [Sei Faucet](https://faucet.sei.io)
+    
+    <Info>
+    Sei testnet details: Chain ID `713715`, RPC `https://evm-rpc-testnet.sei-apis.com`
+    </Info>
+  </Accordion>
+</AccordionGroup>
+
+## Create Your First Paid API
+
+<Steps>
+  <Step title="Install X402 packages">
+    Create a new project and install the required packages:
+    
+    <CodeGroup>
+      ```bash npm
+      mkdir my-paid-api && cd my-paid-api
+      npm init -y
+      npm install @x402/facilitator @x402/client express
+      ```
+      
+      ```bash yarn
+      mkdir my-paid-api && cd my-paid-api
+      yarn init -y
+      yarn add @x402/facilitator @x402/client express
+      ```
+      
+      ```bash pnpm
+      mkdir my-paid-api && cd my-paid-api
+      pnpm init -y
+      pnpm add @x402/facilitator @x402/client express
+      ```
+    </CodeGroup>
+    
+    <Check>
+    **Expected outcome:** Project directory created with x402 dependencies installed.
+    </Check>
+  </Step>
+
+  <Step title="Create a simple paid API server">
+    Create `server.js` with a protected API endpoint:
+    
+    ```javascript
+    const express = require('express');
+    const { createFacilitator } = require('@x402/facilitator');
+    
+    const app = express();
+    
+    // Configure facilitator for Sei testnet
+    const facilitator = createFacilitator({
+      network: 'sei-testnet',
+      scheme: 'exact',
+      price: '0.01', // 0.01 SEI per request
+      walletAddress: 'YOUR_WALLET_ADDRESS' // Replace with your wallet
+    });
+    
+    // Protected endpoint - requires 0.01 SEI payment
+    app.get('/api/premium-data', facilitator.middleware(), (req, res) => {
+      res.json({
+        message: 'This is premium data!',
+        timestamp: Date.now(),
+        data: {
+          price: 100.50,
+          volume: 1000000,
+          trend: 'bullish'
+        }
+      });
+    });
+    
+    // Free endpoint for testing
+    app.get('/api/public', (req, res) => {
+      res.json({ message: 'This is free public data' });
+    });
+    
+    app.listen(3000, () => {
+      console.log('Paid API server running on http://localhost:3000');
+      console.log('Try: curl http://localhost:3000/api/premium-data');
+    });
+    ```
+    
+    <Check>
+    **Expected outcome:** Express server configured with x402 payment middleware.
+    </Check>
+  </Step>
+
+  <Step title="Test the payment requirement">
+    Start your server and test the payment requirement:
+    
+    ```bash
+    node server.js
+    ```
+    
+    In another terminal, try accessing the protected endpoint:
+    
+    ```bash
+    curl http://localhost:3000/api/premium-data
+    ```
+    
+    <Check>
+    **Expected outcome:** You should receive a `402 Payment Required` response with payment details.
+    </Check>
+    
+    Example response:
+    ```json
+    {
+      "error": "Payment Required",
+      "amount": "0.01",
+      "currency": "SEI",
+      "recipient": "YOUR_WALLET_ADDRESS",
+      "network": "sei-testnet"
+    }
+    ```
+  </Step>
+
+  <Step title="Create a client to make payments">
+    Create `client.js` to make paid requests:
+    
+    ```javascript
+    const { createClient } = require('@x402/client');
+    
+    async function makePaidRequest() {
+      // Configure client for Sei testnet
+      const client = createClient({
+        network: 'sei-testnet',
+        privateKey: 'YOUR_PRIVATE_KEY' // Replace with test wallet private key
+      });
+      
+      try {
+        // Make a paid request
+        const response = await client.request('http://localhost:3000/api/premium-data');
+        console.log('✅ Payment successful!');
+        console.log('Response:', response.data);
+      } catch (error) {
+        console.error('❌ Payment failed:', error.message);
+      }
+    }
+    
+    makePaidRequest();
+    ```
+    
+    <Warning>
+    **Security Note:** Never use your main wallet's private key. Create a test wallet with minimal funds for development.
+    </Warning>
+  </Step>
+
+  <Step title="Make your first paid request">
+    Run the client to make a paid request:
+    
+    ```bash
+    node client.js
+    ```
+    
+    <Check>
+    **Expected outcome:** Payment processed on Sei testnet and premium data returned.
+    </Check>
+    
+    You should see output like:
+    ```
+    ✅ Payment successful!
+    Response: {
+      message: 'This is premium data!',
+      timestamp: 1703123456789,
+      data: { price: 100.50, volume: 1000000, trend: 'bullish' }
+    }
+    ```
+  </Step>
+</Steps>
+
+## What You Built
+
+Congratulations! You've just created:
+
+<CardGroup cols={2}>
+  <Card title="Paid API Server" icon="server">
+    An Express.js server that requires SEI payments before serving premium data
+  </Card>
+  <Card title="Payment Client" icon="credit-card">
+    A client that automatically handles payment verification and retries
+  </Card>
+  <Card title="Sei Integration" icon="coins">
+    Real blockchain payments verified on Sei testnet with fast finality
+  </Card>
+  <Card title="Scalable Architecture" icon="arrow-up">
+    Production-ready patterns that can handle thousands of micropayments
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+Now that you have the basics working, explore more advanced features:
+
+<CardGroup cols={2}>
+  <Card title="Add Wallet UI" href="/sei/wallet-integration">
+    **Connect user wallets** Add wallet connection UI for users to pay without
+    private keys
+  </Card>
+  <Card title="Streaming Payments" href="/sei/streaming-payments">
+    **Pay-per-use APIs** Implement streaming payments for long-running or
+    bandwidth-heavy APIs
+  </Card>
+  <Card title="Subscription Model" href="/sei/subscription-payments">
+    **Time-based access** Create subscription APIs with monthly or daily access
+    tokens
+  </Card>
+  <Card title="Production Deployment" href="/facilitators/deployment">
+    **Scale your API** Deploy to production with monitoring, rate limiting, and
+    failover
+  </Card>
+</CardGroup>
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Payment Required error won't go away">
+    **Solution:** Ensure your client is properly configured with a valid private key and sufficient SEI balance:
+    ```javascript
+    // Check your wallet has test SEI
+    const balance = await client.getBalance();
+    console.log('Wallet balance:', balance);
+    ```
+  </Accordion>
+  
+  <Accordion title="Network connection errors">
+    **Solution:** Verify Sei testnet RPC is accessible:
+    ```javascript
+    // Test RPC connection
+    const client = createClient({ network: 'sei-testnet' });
+    const blockNumber = await client.getBlockNumber();
+    console.log('Current block:', blockNumber);
+    ```
+  </Accordion>
+  
+  <Accordion title="Transaction fees too high">
+    **Solution:** Sei has very low gas fees, but ensure you're using testnet for development:
+    ```javascript
+    // Use testnet for development
+    const facilitator = createFacilitator({
+      network: 'sei-testnet', // Not 'sei-mainnet'
+      price: '0.001' // Start with smaller amounts
+    });
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## What's Next?
+
+- **[Sei Integration Guide](/sei/introduction)** - Deep dive into Sei-specific features
+- **[Full-stack Examples](/examples/next-auth)** - Complete applications with UI
+- **[Production Deployment](/facilitators/deployment)** - Launch your API to production
