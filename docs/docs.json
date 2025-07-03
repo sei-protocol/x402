@@ -54,7 +54,7 @@
 				"pages": [
 					{
 						"group": "Getting Started",
-						"pages": ["facilitators/introduction", "facilitators/setup"]
+						"pages": ["facilitators/introduction", "facilitators/example"]
 					}
 				]
 			},
