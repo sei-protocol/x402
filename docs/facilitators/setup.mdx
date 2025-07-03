@@ -16,7 +16,7 @@ Before setting up a facilitator, ensure you have:
 ### 1. Install Dependencies
 
 ```bash
-npm install @x402/facilitator
+npm install @sei-js/x402-facilitator
 ```
 
 ### 2. Environment Configuration
@@ -39,7 +39,7 @@ NODE_ENV=production
 ### 3. Basic Facilitator
 
 ```typescript
-import { createFacilitator } from "@x402/facilitator";
+import { createFacilitator } from "@sei-js/x402-facilitator";
 
 const facilitator = createFacilitator({
   network: process.env.SEI_NETWORK || "sei-mainnet",
@@ -248,7 +248,7 @@ async function testValidation() {
 
 ```typescript
 import express from "express";
-import { x402Middleware } from "@x402/express";
+import { x402Middleware } from "@sei-js/x402-express";
 
 const app = express();
 

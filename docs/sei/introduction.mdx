@@ -9,9 +9,9 @@ icon: "coins"
 Sei Network is uniquely positioned to enable practical HTTP micropayments through x402. Its combination of speed, low costs, and EVM compatibility makes it ideal for pay-per-request APIs and real-time payment streams.
 
 <CardGroup cols={2}>
-  <Card title="300ms Finality" icon="bolt">
+  <Card title="400ms Finality" icon="bolt">
     **Faster than traditional payments** Sei's optimistic parallelization
-    enables 300ms block times, making micropayments faster than credit card
+    enables 400ms block times, making micropayments faster than credit card
     processing.
   </Card>
   <Card title="Ultra-Low Fees" icon="dollar-sign">
@@ -36,9 +36,9 @@ Sei Network is uniquely positioned to enable practical HTTP micropayments throug
 <AccordionGroup>
   <Accordion title="Optimistic Parallelization" icon="parallel">
     **Concurrent transaction processing**
-    
+
     Unlike other blockchains that process transactions sequentially, Sei's optimistic parallelization allows multiple non-conflicting transactions to be processed simultaneously. This means your x402 payments can be processed in parallel with other blockchain activity, reducing latency and increasing throughput.
-    
+
     ```javascript
     // Multiple payments can be processed simultaneously
     const payments = await Promise.all([
@@ -48,12 +48,12 @@ Sei Network is uniquely positioned to enable practical HTTP micropayments throug
     ]);
     ```
   </Accordion>
-  
+
   <Accordion title="Native Order Matching" icon="exchange">
     **Built-in trading infrastructure**
-    
+
     Sei's native order book enables sophisticated payment routing and automatic token swaps. Your x402 system can accept payments in various tokens and automatically convert them to your preferred settlement currency.
-    
+
     ```javascript
     // Accept payments in multiple tokens
     const facilitator = createFacilitator({
@@ -63,10 +63,10 @@ Sei Network is uniquely positioned to enable practical HTTP micropayments throug
     });
     ```
   </Accordion>
-  
+
   <Accordion title="Market-Based Fee Mechanism" icon="chart-line">
     **Predictable and fair pricing**
-    
+
     Sei's fee mechanism prevents sudden spikes in gas costs, ensuring your micropayment costs remain predictable. This is crucial for x402 systems where payment amounts might be small.
   </Accordion>
 </AccordionGroup>
@@ -78,7 +78,7 @@ Get connected to Sei Network for x402 development and production:
 <Tabs>
   <Tab title="Sei Mainnet">
     **Production environment for live payments**
-    
+
     ```javascript
     const facilitator = createFacilitator({
       network: 'sei',
@@ -87,17 +87,17 @@ Get connected to Sei Network for x402 development and production:
       currency: 'SEI'
     });
     ```
-    
+
     **Network Details:**
     - **Chain ID:** 1329
     - **RPC URL:** `https://evm-rpc.sei-apis.com`
     - **Explorer:** [Seitrace](https://seitrace.com)
     - **Native Token:** SEI
   </Tab>
-  
+
   <Tab title="Sei Testnet">
     **Development and testing environment**
-    
+
     ```javascript
     const facilitator = createFacilitator({
       network: 'sei-testnet',
@@ -106,17 +106,17 @@ Get connected to Sei Network for x402 development and production:
       currency: 'SEI'
     });
     ```
-    
+
     **Network Details:**
     - **Chain ID:** 713715
     - **RPC URL:** `https://evm-rpc-testnet.sei-apis.com`
     - **Explorer:** [Testnet Seitrace](https://seitrace.com/?chain=testnet)
     - **Faucet:** [Get test SEI](https://faucet.sei.io)
   </Tab>
-  
+
   <Tab title="Sei Devnet">
     **Latest features and experimental builds**
-    
+
     ```javascript
     const facilitator = createFacilitator({
       network: 'sei-devnet',
@@ -125,7 +125,7 @@ Get connected to Sei Network for x402 development and production:
       currency: 'SEI'
     });
     ```
-    
+
     **Network Details:**
     - **Chain ID:** 713716
     - **RPC URL:** `https://evm-rpc-devnet.sei-apis.com`
@@ -149,7 +149,7 @@ app.get(
     pricePerSecond: "0.001", // 0.001 SEI per second of data
   }),
   (req, res) => {
-    // Sei's 300ms finality enables real-time payment verification
+    // Sei's 400ms finality enables real-time payment verification
     const priceStream = createPriceStream();
     res.writeHead(200, { "Content-Type": "application/json" });
 

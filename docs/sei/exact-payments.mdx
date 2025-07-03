@@ -33,7 +33,7 @@ graph LR
     
     ```typescript
     import express from 'express';
-    import { createFacilitator } from '@x402/facilitator';
+    import { createFacilitator } from '@sei-js/x402-facilitator';
     
     const app = express();
     
@@ -70,7 +70,7 @@ graph LR
     Set up a client to make exact payments:
     
     ```typescript
-    import { createClient } from '@x402/client';
+    import { createClient } from '@sei-js/x402-client';
     
     const client = createClient({
       network: 'sei-testnet',
@@ -178,7 +178,7 @@ app.get("/api/enterprise", enterpriseFacilitator.middleware(), (req, res) => {
 Implement dynamic pricing based on content, user type, or market conditions:
 
 ```typescript
-import { createFacilitator } from "@x402/facilitator";
+import { createFacilitator } from "@sei-js/x402-facilitator";
 
 // Dynamic pricing function
 function getDynamicPrice(contentType: string, userTier: string): string {
@@ -273,7 +273,7 @@ const response = await client.request("http://localhost:3000/api/data", {
 Implement additional verification logic:
 
 ```typescript
-import { createFacilitator } from "@x402/facilitator";
+import { createFacilitator } from "@sei-js/x402-facilitator";
 
 const facilitator = createFacilitator({
   network: "sei-testnet",
@@ -317,7 +317,7 @@ const facilitator = createFacilitator({
 Track payment status and history on the client:
 
 ```typescript
-import { createClient } from "@x402/client";
+import { createClient } from "@sei-js/x402-client";
 
 const client = createClient({
   network: "sei-testnet",
@@ -379,7 +379,7 @@ const client = createClient({
 Cache payment verifications to improve performance:
 
 ```typescript
-import { createFacilitator } from "@x402/facilitator";
+import { createFacilitator } from "@sei-js/x402-facilitator";
 import Redis from "ioredis";
 
 const redis = new Redis(process.env.REDIS_URL);
@@ -414,7 +414,7 @@ const facilitator = createFacilitator({
 Handle common payment failures gracefully:
 
 ```typescript
-import { createClient } from "@x402/client";
+import { createClient } from "@sei-js/x402-client";
 
 const client = createClient({
   network: "sei-testnet",

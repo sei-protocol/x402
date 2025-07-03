@@ -173,12 +173,12 @@ Get your development environment ready for building x402 applications on Sei Net
       npm init -y
       
       # Install core x402 packages
-      npm install @x402/client @x402/facilitator
+      npm install @sei-js/x402-client @sei-js/x402-facilitator
       
       # Install framework-specific packages (choose one)
-      npm install @x402/express  # For Express.js
-      npm install @x402/next     # For Next.js
-      npm install @x402/hono     # For Hono
+      npm install @sei-js/x402-express  # For Express.js
+      npm install @sei-js/x402-next     # For Next.js
+      npm install @sei-js/x402-hono     # For Hono
       ```
       
       ```bash yarn
@@ -187,12 +187,12 @@ Get your development environment ready for building x402 applications on Sei Net
       yarn init -y
       
       # Install core x402 packages
-      yarn add @x402/client @x402/facilitator
+      yarn add @sei-js/x402-client @sei-js/x402-facilitator
       
       # Install framework-specific packages (choose one)
-      yarn add @x402/express     # For Express.js
-      yarn add @x402/next        # For Next.js
-      yarn add @x402/hono        # For Hono
+      yarn add @sei-js/x402-express     # For Express.js
+      yarn add @sei-js/x402-next        # For Next.js
+      yarn add @sei-js/x402-hono        # For Hono
       ```
       
       ```bash pnpm
@@ -201,12 +201,12 @@ Get your development environment ready for building x402 applications on Sei Net
       pnpm init -y
       
       # Install core x402 packages
-      pnpm add @x402/client @x402/facilitator
+      pnpm add @sei-js/x402-client @sei-js/x402-facilitator
       
       # Install framework-specific packages (choose one)
-      pnpm add @x402/express     # For Express.js
-      pnpm add @x402/next        # For Next.js
-      pnpm add @x402/hono        # For Hono
+      pnpm add @sei-js/x402-express     # For Express.js
+      pnpm add @sei-js/x402-next        # For Next.js
+      pnpm add @sei-js/x402-hono        # For Hono
       ```
     </CodeGroup>
     
@@ -286,8 +286,8 @@ Test your development environment with a simple verification script:
 <CodeGroup>
 ```typescript TypeScript
 // verify-setup.ts
-import { createClient } from '@x402/client';
-import { createFacilitator } from '@x402/facilitator';
+import { createClient } from '@sei-js/x402-client';
+import { createFacilitator } from '@sei-js/x402-facilitator';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -333,8 +333,8 @@ verifySetup();
 
 ```javascript JavaScript
 // verify-setup.js
-const { createClient } = require('@x402/client');
-const { createFacilitator } = require('@x402/facilitator');
+const { createClient } = require('@sei-js/x402-client');
+const { createFacilitator } = require('@sei-js/x402-facilitator');
 require('dotenv').config();
 
 async function verifySetup() {

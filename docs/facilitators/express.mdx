@@ -10,15 +10,15 @@ Easily add x402 payments to your Express.js server with the built-in middleware.
 ## Installation
 
 ```bash
-npm install express @x402/facilitator @x402/express
+npm install express @sei-js/x402-facilitator @sei-js/x402-express
 ```
 
 ## Basic Setup
 
 ```typescript
 import express from "express";
-import { createFacilitator } from "@x402/facilitator";
-import { x402Middleware } from "@x402/express";
+import { createFacilitator } from "@sei-js/x402-facilitator";
+import { x402Middleware } from "@sei-js/x402-express";
 
 const app = express();
 
@@ -90,8 +90,8 @@ app.use(
 
 ```typescript
 import express from "express";
-import { createFacilitator } from "@x402/facilitator";
-import { x402Middleware } from "@x402/express";
+import { createFacilitator } from "@sei-js/x402-facilitator";
+import { x402Middleware } from "@sei-js/x402-express";
 
 const app = express();
 app.use(express.json());

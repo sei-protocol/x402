@@ -18,14 +18,14 @@ This guide walks you through creating a complete payment flow on Sei Network - f
 <Steps>
   <Step title="Create project structure">
     Set up a clean project structure for your first X402 payment system:
-    
+
     ```bash
     mkdir first-x402-payment && cd first-x402-payment
     npm init -y
-    npm install @x402/facilitator @x402/client express dotenv
+    npm install @sei-js/x402-facilitator @sei-js/x402-client express dotenv
     npm install -D typescript @types/node @types/express ts-node
     ```
-    
+
     Create the following file structure:
     ```
     first-x402-payment/
@@ -36,11 +36,12 @@ This guide walks you through creating a complete payment flow on Sei Network - f
     ├── package.json
     └── tsconfig.json
     ```
-    
+
     <Check>Project structure created with dependencies installed</Check>
   </Step>
 
 {" "}
+
 <Step title="Configure environment">
   Create `.env` file with your Sei testnet configuration: ```bash # Sei Network
   Configuration NETWORK=sei-testnet RPC_URL=https://evm-rpc-testnet.sei-apis.com
@@ -56,7 +57,7 @@ This guide walks you through creating a complete payment flow on Sei Network - f
 
   <Step title="Set up TypeScript">
     Create `tsconfig.json`:
-    
+
     ```json
     {
       "compilerOptions": {
@@ -73,7 +74,7 @@ This guide walks you through creating a complete payment flow on Sei Network - f
       "exclude": ["node_modules", "dist"]
     }
     ```
-    
+
     Update `package.json` scripts:
     ```json
     {
@@ -85,7 +86,7 @@ This guide walks you through creating a complete payment flow on Sei Network - f
       }
     }
     ```
-    
+
     <Check>TypeScript configuration ready</Check>
   </Step>
 </Steps>
@@ -97,7 +98,7 @@ Create a server that requires payment for premium content:
 <CodeGroup>
 ```typescript src/server.ts
 import express from 'express';
-import { createFacilitator } from '@x402/facilitator';
+import { createFacilitator } from '@sei-js/x402-facilitator';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -173,7 +174,7 @@ Create a client that can make paid requests:
 
 <CodeGroup>
 ```typescript src/client.ts
-import { createClient } from '@x402/client';
+import { createClient } from '@sei-js/x402-client';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -245,31 +246,31 @@ demonstratePayments();
 <Steps>
   <Step title="Start the payment server">
     In your first terminal, start the server:
-    
+
     ```bash
     npm run dev:server
     ```
-    
+
     You should see:
     ```
     🚀 X402 Payment Server running on http://localhost:3000
     💰 Premium endpoint: /api/premium (0.01 SEI)
     🆓 Public endpoint: /api/public (free)
     📊 Status: /api/status
-    
+
     🧪 Test with: curl http://localhost:3000/api/premium
     ```
-    
+
     <Check>Server running and ready to accept requests</Check>
   </Step>
 
   <Step title="Test payment requirement">
     In a second terminal, test that payment is required:
-    
+
     ```bash
     curl http://localhost:3000/api/premium
     ```
-    
+
     Expected response (402 Payment Required):
     ```json
     {
@@ -280,32 +281,32 @@ demonstratePayments();
       "message": "Payment of 0.01 SEI required to access this endpoint"
     }
     ```
-    
+
     <Check>Payment requirement working correctly</Check>
   </Step>
 
   <Step title="Make your first paid request">
     Run the payment client:
-    
+
     ```bash
     npm run dev:client
     ```
-    
+
     You should see output like:
     ```
     🔄 Initializing X402 client for Sei testnet...
-    
+
     💰 Checking wallet balance...
        Balance: 0.95 SEI
-    
+
     🆓 Testing free endpoint...
     ✅ Free endpoint response: This is free public data
        Data: { publicInfo: 'Available to everyone', freeData: 42 }
-    
+
     ❌ Testing premium endpoint without payment...
     ✅ Payment required (as expected)
        Status: 402 Payment Required
-    
+
     💳 Making paid request to premium endpoint...
     ✅ Payment successful!
        Response: Premium data unlocked!
@@ -314,13 +315,13 @@ demonstratePayments();
          premiumMetrics: { revenue: 15420.5, users: 3847, growth: '+23.4%' },
          prediction: 'Market will trend upward'
        }
-    
+
     💰 Final balance: 0.9392 SEI
     💸 Amount spent: ~0.0108 SEI
-    
+
     🎉 First X402 payment completed successfully!
     ```
-    
+
     <Check>Payment processed successfully on Sei testnet</Check>
   </Step>
 </Steps>
@@ -338,7 +339,7 @@ Let's break down the payment flow:
 <Accordion title="2. Payment Creation">
   The X402 client automatically: - Detects the 402 response - Creates a payment
   transaction on Sei testnet - Signs and submits the transaction - Waits for
-  confirmation (usually ~300ms on Sei)
+  confirmation (usually ~400ms on Sei)
 </Accordion>
 
 <Accordion title="3. Payment Verification">
@@ -406,12 +407,14 @@ View your payment on the Sei testnet explorer:
     correct network (testnet vs mainnet)
   </Accordion>
 
-  <Accordion title="Server doesn't detect payment">
-    **Problem:** Payment goes through but server still returns 402 **Solution:**
-    - Verify server and client are using the same network - Check the
-    facilitator address matches your wallet - Wait for transaction confirmation
-    (up to 1-2 seconds on Sei)
-  </Accordion>
+{" "}
+
+<Accordion title="Server doesn't detect payment">
+  **Problem:** Payment goes through but server still returns 402 **Solution:** -
+  Verify server and client are using the same network - Check the facilitator
+  address matches your wallet - Wait for transaction confirmation (up to 1-2
+  seconds on Sei)
+</Accordion>
 
   <Accordion title="Connection errors">
     **Problem:** RPC connection failures or timeouts **Solution:** - Verify RPC

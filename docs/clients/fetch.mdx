@@ -10,14 +10,14 @@ Use x402 with the standard Fetch API to make paid HTTP requests. Perfect for bot
 ## Installation
 
 ```bash
-npm install @x402/client @x402/fetch
+npm install @sei-js/x402-client @sei-js/x402-fetch
 ```
 
 ## Basic Usage
 
 ```typescript
-import { createClient } from "@x402/client";
-import { fetchWithPayment } from "@x402/fetch";
+import { createClient } from "@sei-js/x402-client";
+import { fetchWithPayment } from "@sei-js/x402-fetch";
 
 // Create x402 client
 const client = createClient({
@@ -45,7 +45,7 @@ async function fetchPaidContent() {
 ### Custom Payment Options
 
 ```typescript
-import { createPaymentHeader } from "@x402/client";
+import { createPaymentHeader } from "@sei-js/x402-client";
 
 const client = createClient({
   network: "sei-mainnet",
@@ -106,8 +106,8 @@ async function robustFetchWithPayment(url: string, options = {}) {
     <div id="result"></div>
 
     <script type="module">
-      import { createClient } from "https://unpkg.com/@x402/client";
-      import { fetchWithPayment } from "https://unpkg.com/@x402/fetch";
+      import { createClient } from "https://unpkg.com/@sei-js/x402-client";
+      import { fetchWithPayment } from "https://unpkg.com/@sei-js/x402-fetch";
 
       const client = createClient({
         network: "sei-mainnet",
@@ -141,8 +141,8 @@ async function robustFetchWithPayment(url: string, options = {}) {
 
 ```typescript
 // paid-api-client.ts
-import { createClient } from "@x402/client";
-import { fetchWithPayment } from "@x402/fetch";
+import { createClient } from "@sei-js/x402-client";
+import { fetchWithPayment } from "@sei-js/x402-fetch";
 
 class PaidAPIClient {
   private client: any;
