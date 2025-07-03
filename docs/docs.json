@@ -44,40 +44,17 @@
 					{
 						"group": "Introduction",
 						"pages": ["introduction", "overview", "quickstart"]
-					},
-					{
-						"group": "Understanding x402",
-						"pages": ["protocol/what-is-x402", "protocol/how-it-works", "protocol/use-cases"]
 					}
 				]
 			},
 			{
-				"dropdown": "Sei Network Integration",
-				"description": "Build on Sei with x402",
-				"icon": "coins",
-				"pages": [
-					{
-						"group": "Getting Started with Sei",
-						"pages": ["sei/introduction", "sei/setup", "sei/first-payment"]
-					},
-					{
-						"group": "Payment Implementation",
-						"pages": ["sei/exact-payments"]
-					}
-				]
-			},
-			{
-				"dropdown": "Facilitators & Servers",
-				"description": "Accept x402 payments",
+				"dropdown": "Facilitators",
+				"description": "Verifying and settling payments",
 				"icon": "server",
 				"pages": [
 					{
 						"group": "Getting Started",
 						"pages": ["facilitators/introduction", "facilitators/setup"]
-					},
-					{
-						"group": "Server Implementation",
-						"pages": ["facilitators/express"]
 					}
 				]
 			},
