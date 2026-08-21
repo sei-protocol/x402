@@ -5,6 +5,8 @@ import { DEFAULT_ASSETS, findDefaultAsset, getDefaultAsset } from "../../src/def
 
 const BASE_USDC = DEFAULT_ASSETS["eip155:8453"]![0]!;
 const MEZO_TESTNET_MUSD = DEFAULT_ASSETS["eip155:31611"]![0]!;
+const SEI_USDC = DEFAULT_ASSETS["eip155:1329"]![0]!;
+const SEI_TESTNET_USDC = DEFAULT_ASSETS["eip155:1328"]![0]!;
 
 describe("defaultAssets (EVM)", () => {
   describe("findDefaultAsset", () => {
@@ -36,6 +38,13 @@ describe("defaultAssets (EVM)", () => {
     it("returns the first list entry as the network default", () => {
       expect(getDefaultAsset("eip155:8453")).toEqual(BASE_USDC);
       expect(getDefaultAsset("base")).toEqual(BASE_USDC);
+    });
+
+    it("returns Sei USDC defaults by CAIP-2 and legacy network names", () => {
+      expect(getDefaultAsset("eip155:1329")).toEqual(SEI_USDC);
+      expect(getDefaultAsset("sei")).toEqual(SEI_USDC);
+      expect(getDefaultAsset("eip155:1328")).toEqual(SEI_TESTNET_USDC);
+      expect(getDefaultAsset("sei-testnet")).toEqual(SEI_TESTNET_USDC);
     });
 
     it("throws when requesting a symbol that is not configured on the network", () => {

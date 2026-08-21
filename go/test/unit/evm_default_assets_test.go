@@ -12,6 +12,8 @@ import (
 func TestEVMDefaultAssets(t *testing.T) {
 	baseUSDC := evm.DefaultAssets["eip155:8453"][0]
 	mezoTestnetMUSD := evm.DefaultAssets["eip155:31611"][0]
+	seiUSDC := evm.DefaultAssets["eip155:1329"][0]
+	seiTestnetUSDC := evm.DefaultAssets["eip155:1328"][0]
 
 	t.Run("findDefaultAsset matches checksummed and lowercase addresses", func(t *testing.T) {
 		checksummed := common.HexToAddress(baseUSDC.Asset).Hex()
@@ -56,6 +58,25 @@ func TestEVMDefaultAssets(t *testing.T) {
 		got, err = evm.GetDefaultAsset("base", "")
 		if err != nil || got.Asset != baseUSDC.Asset {
 			t.Fatalf("GetDefaultAsset(base) = %+v, %v", got, err)
+		}
+	})
+
+	t.Run("getDefaultAsset returns Sei defaults for CAIP-2 and legacy names", func(t *testing.T) {
+		tests := []struct {
+			network string
+			want    evm.DefaultAssetInfo
+		}{
+			{network: "eip155:1329", want: seiUSDC},
+			{network: "sei", want: seiUSDC},
+			{network: "eip155:1328", want: seiTestnetUSDC},
+			{network: "sei-testnet", want: seiTestnetUSDC},
+		}
+
+		for _, tt := range tests {
+			got, err := evm.GetDefaultAsset(tt.network, "")
+			if err != nil || got.Asset != tt.want.Asset {
+				t.Fatalf("GetDefaultAsset(%s) = %+v, %v; want %+v", tt.network, got, err, tt.want)
+			}
 		}
 	})
 
