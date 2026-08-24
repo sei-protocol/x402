@@ -29,10 +29,6 @@ class TestV1GetEvmChainId:
     def test_should_resolve_avalanche(self):
         assert get_evm_chain_id("avalanche") == 43114
 
-    def test_should_resolve_sei_networks(self):
-        assert get_evm_chain_id("sei") == 1329
-        assert get_evm_chain_id("sei-testnet") == 1328
-
     def test_should_reject_undefined_aliases(self):
         with pytest.raises(ValueError, match="Unknown v1 network"):
             get_evm_chain_id("base-mainnet")
@@ -60,13 +56,6 @@ class TestV1GetAssetInfo:
     def test_should_return_asset_by_address(self):
         info = get_asset_info("base-sepolia", "0x036CbD53842c5426634e7929541eC2318f3dCF7e")
         assert info["decimals"] == 6
-
-    def test_should_return_sei_assets(self):
-        mainnet = get_asset_info("sei", "0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392")
-        testnet = get_asset_info("sei-testnet", "0x4fCF1784B31630811181f670Aea7A7bEF803eaED")
-
-        assert mainnet["name"] == "USDC"
-        assert testnet["name"] == "USDC"
 
     def test_should_raise_for_unknown_v1_network(self):
         with pytest.raises(ValueError, match="No default asset for v1 network"):

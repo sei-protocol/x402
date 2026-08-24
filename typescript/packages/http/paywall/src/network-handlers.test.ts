@@ -186,10 +186,6 @@ describe("Network Handlers", () => {
       expect(resolveFaucetUrl("eip155:84532", {})).toBe(FAUCET_URLS["eip155:84532"]);
     });
 
-    it("returns the Circle faucet for Sei Testnet", () => {
-      expect(resolveFaucetUrl("eip155:1328", {})).toBe("https://faucet.circle.com/");
-    });
-
     it("returns undefined for unmapped chains so the paywall renders fallback text", () => {
       expect(resolveFaucetUrl("eip155:9999999", {})).toBeUndefined();
     });

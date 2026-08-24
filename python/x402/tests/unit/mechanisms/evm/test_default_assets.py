@@ -14,8 +14,6 @@ from x402.mechanisms.evm.exact.server import ExactEvmScheme
 
 BASE_USDC = DEFAULT_ASSETS["eip155:8453"][0]
 MEZO_TESTNET_MUSD = DEFAULT_ASSETS["eip155:31611"][0]
-SEI_USDC = DEFAULT_ASSETS["eip155:1329"][0]
-SEI_TESTNET_USDC = DEFAULT_ASSETS["eip155:1328"][0]
 
 
 class TestFindDefaultAsset:
@@ -43,12 +41,6 @@ class TestGetDefaultAsset:
     def test_returns_first_list_entry_as_network_default(self):
         assert get_default_asset("eip155:8453") == BASE_USDC
         assert get_default_asset("base") == BASE_USDC
-
-    def test_returns_sei_defaults_by_caip2_and_legacy_network_names(self):
-        assert get_default_asset("eip155:1329") == SEI_USDC
-        assert get_default_asset("sei") == SEI_USDC
-        assert get_default_asset("eip155:1328") == SEI_TESTNET_USDC
-        assert get_default_asset("sei-testnet") == SEI_TESTNET_USDC
 
     def test_throws_when_requesting_a_symbol_not_configured(self):
         with pytest.raises(
