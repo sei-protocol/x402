@@ -1,5 +1,11 @@
 # @coinbase/x402
 
+> [!CAUTION]
+> **`@sei-js/coinbase-x402` is deprecated and unmaintained.** It was a scope rename of
+> [`@coinbase/x402`](https://www.npmjs.com/package/@coinbase/x402) with no Sei-specific
+> changes, so switch the import back to the upstream package. The exported API is unchanged.
+> See [MIGRATION.md](../../../MIGRATION.md).
+
 The official Coinbase facilitator package for the x402 Payment Protocol. This package provides direct access to Coinbase's hosted facilitator service, enabling seamless payment verification and settlement.
 
 ## Installation

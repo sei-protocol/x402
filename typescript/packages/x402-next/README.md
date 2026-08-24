@@ -1,5 +1,14 @@
 # x402-next
 
+> [!CAUTION]
+> **`@sei-js/x402-next` is deprecated and unmaintained.** Sei is now supported natively in
+> the upstream x402 SDK, so use [`@x402/next`](https://www.npmjs.com/package/@x402/next)
+> instead. Note that v2 replaces `paymentMiddleware` with `paymentProxy`.
+> See [MIGRATION.md](../../../MIGRATION.md).
+>
+> This package also defaults Sei mainnet to an IBC-bridged USDC without EIP-3009 support, so
+> `exact` payments cannot settle against it. Upstream uses native USDC.
+
 Next.js middleware integration for the x402 Payment Protocol. This package allows you to easily add paywall functionality to your Next.js applications using the x402 protocol.
 
 ## Installation
