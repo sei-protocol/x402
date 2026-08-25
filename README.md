@@ -1,5 +1,17 @@
 # x402 payments protocol
 
+> [!CAUTION]
+> **This fork is deprecated and unmaintained.** The `@sei-js/*` x402 packages published from
+> this repository are retired. Sei is now supported natively in the upstream
+> [x402 SDK](https://github.com/x402-foundation/x402), so use the `@x402/*` packages instead.
+>
+> **Existing users should migrate: see [MIGRATION.md](./MIGRATION.md).**
+>
+> Beyond being unmaintained, these packages default Sei mainnet to an IBC-bridged USDC that
+> does not implement EIP-3009. Because the `exact` scheme settles via
+> `transferWithAuthorization`, payments cannot settle against that asset. Upstream uses
+> native USDC, which does implement EIP-3009.
+
 > "1 line of code to accept digital dollars. No fee, 2 second settlement, $0.001 minimum payment."
 
 ```typescript

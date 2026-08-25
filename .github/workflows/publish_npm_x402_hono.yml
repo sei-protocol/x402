@@ -11,6 +11,11 @@ jobs:
       contents: read
       id-token: write
     steps:
+      - name: Refuse to publish a retired package
+        run: |
+          echo "::error::@sei-js x402 packages are retired. Sei is supported natively upstream via @x402/*. See MIGRATION.md."
+          exit 1
+
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:

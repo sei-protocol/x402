@@ -1,5 +1,13 @@
 # x402-fetch
 
+> [!CAUTION]
+> **`@sei-js/x402-fetch` is deprecated and unmaintained.** Sei is now supported natively in
+> the upstream x402 SDK, so use [`@x402/fetch`](https://www.npmjs.com/package/@x402/fetch)
+> instead. See [MIGRATION.md](../../../MIGRATION.md).
+>
+> This package also defaults Sei mainnet to an IBC-bridged USDC without EIP-3009 support, so
+> `exact` payments cannot settle against it. Upstream uses native USDC.
+
 A utility package that extends the native `fetch` API to automatically handle 402 Payment Required responses using the x402 payment protocol. This package enables seamless integration of payment functionality into your applications when making HTTP requests.
 
 ## Installation

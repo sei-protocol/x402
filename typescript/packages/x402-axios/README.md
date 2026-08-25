@@ -1,5 +1,13 @@
 # x402-axios
 
+> [!CAUTION]
+> **`@sei-js/x402-axios` is deprecated and unmaintained.** Sei is now supported natively in
+> the upstream x402 SDK, so use [`@x402/axios`](https://www.npmjs.com/package/@x402/axios)
+> instead. See [MIGRATION.md](../../../MIGRATION.md).
+>
+> This package also defaults Sei mainnet to an IBC-bridged USDC without EIP-3009 support, so
+> `exact` payments cannot settle against it. Upstream uses native USDC.
+
 A utility package that extends Axios to automatically handle 402 Payment Required responses using the x402 payment protocol. This package enables seamless integration of payment functionality into your applications when making HTTP requests with Axios.
 
 ## Installation

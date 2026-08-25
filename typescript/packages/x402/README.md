@@ -1,5 +1,14 @@
 # Sei x402
 
+> [!CAUTION]
+> **`@sei-js/x402` is deprecated and unmaintained.** Sei is now supported natively in the
+> upstream x402 SDK, so use [`@x402/core`](https://www.npmjs.com/package/@x402/core) and
+> [`@x402/evm`](https://www.npmjs.com/package/@x402/evm) instead.
+> See [MIGRATION.md](../../../MIGRATION.md).
+>
+> This package also defaults Sei mainnet to an IBC-bridged USDC without EIP-3009 support, so
+> `exact` payments cannot settle against it. Upstream uses native USDC.
+
 Core TypeScript implementation of the x402 Payment Protocol adapted for SEI. This package provides the foundational types, schemas, and utilities that power all x402 integrations.
 
 ## Installation
