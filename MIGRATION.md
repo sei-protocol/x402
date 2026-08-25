@@ -23,6 +23,48 @@ Both upstream contracts report symbol `USDC`, EIP-712 version `2`, and 6 decimal
 hardcoded either fork address anywhere, replace it. If you relied on the default asset,
 upgrading picks up the correct one automatically.
 
+## Timing: dollar-string pricing on Sei needs the next release
+
+The Sei defaults are merged upstream but are **not yet in a published npm or PyPI
+release**. The newest `@x402/evm` is 2.23.0 (2026-08-18), which predates the merge.
+
+Practically, on 2.23.0 a dollar-string price on Sei throws, because `getDefaultAsset`
+has no entry to resolve:
+
+```
+Error: No default asset configured for network eip155:1329
+```
+
+Everything else about Sei works on 2.23.0. Only the money-string path is affected, since
+that is the one place the default asset table is consulted. So until the next release you
+have two options.
+
+Wait for the release and keep `price: "$0.10"` as shown throughout this guide. Releases
+have been roughly weekly, and the Sei entries are already on `main`.
+
+Or migrate now and name the asset explicitly, which skips the default lookup entirely:
+
+```typescript
+"GET /protected": {
+  accepts: {
+    scheme: "exact",
+    network: "eip155:1329",
+    payTo: "0xYourAddress",
+    price: {
+      asset: "0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392",
+      amount: "100000", // atomic units, so 0.10 USDC at 6 decimals
+      extra: { name: "USDC", version: "2" },
+    },
+  },
+},
+```
+
+The `extra` block carrying `name` and `version` is required: EIP-3009 tokens need them to
+build the `transferWithAuthorization` EIP-712 domain.
+
+Go is not affected. That module has no semver tags, so the proxy serves pseudo-versions
+off `main` and already includes the Sei defaults.
+
 ## Package mapping
 
 | Deprecated | Replacement |
